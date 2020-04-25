@@ -1,3 +1,5 @@
+[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/vivek-verma202/GWAS_FM) 
+
 # GWAS_FM
 
 ## This repository contains scripts for QC and genome-wide analysis study (GWAS) using:
