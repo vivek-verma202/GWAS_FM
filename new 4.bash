@@ -255,34 +255,6 @@ awk '{ if ($14 < 0.1) { print } }' ./output/tcan_head_or_face_30markers.SAIGE.re
 
 
 
-/home/vivek22/gavinband-bgen-44fcabbc5c38/build/apps/bgenix \
--g ./plink/tcan.bgen -index
-
-
-
-
-# replace multiple spaces with single space:
-cat ukb_mfi_v3.tsv | tr -s " " | tr ' ' \\t | head
-echo $'chr\talt_id\trsid\tpos\ta1\ta2\tmaf\tma\tinfo' | cat - ukb_mfi_v3.tsv | head
-
-
-
-
-
-module load mugqic/python/3.7.3
-python
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
