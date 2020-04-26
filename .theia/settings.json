@@ -1,5 +1,14 @@
 {
+    "workbench.iconTheme": "theia-file-icons",
+    "workbench.colorTheme": "dark",
+    "editor.fontSize": 16,
+    "editor.fontFamily": "monospace",
+    "editor.fontWeight": "700",
     "editor.autoSave": "on",
     "editor.fontWeight": "700",
-    "editor.cursorSmoothCaretAnimation": true
+    "editor.cursorSmoothCaretAnimation": true,
+    "editor.cursorWidth": "2",
+    "git.decorations.colors": true,
+    "editor.tabCompletion": "on",
+    "files.eol": "\n"
 }
