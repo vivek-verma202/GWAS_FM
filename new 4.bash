@@ -135,7 +135,6 @@ for i in {1..22}; do
 	awk -v chr=$i 'BEGIN {FS="\t"; OFS="\t"} {print chr,$0}' "ukb_mfi_chr${i}_v3.txt" >> ukb_mfi_v3.tsv
 done
 
-
 # make MAF >= 0.001, info >= 0.8 SNP file:
 cat ukb_mfi_v3.tsv | awk '{if($7 >= 0.001 && $7 < 0.5 && $9 >= 0.8){print}}' > qc1
 # awk '{print $1":"$4}' < qc1 > qc2
