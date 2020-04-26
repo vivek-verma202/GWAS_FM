@@ -10,6 +10,8 @@
         Covariates : age, sex, genotyping platform, first 40 PCs
         Platform   : x86_64 GNU/Linux beluga1.int.ets1.calculquebec.ca (computecanada)  
 
+        Saige script source: https://github.com/weizhouUMICH/SAIGE
+
         
 
         

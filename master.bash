@@ -228,7 +228,7 @@ done
 for i in {1..22}; do
 sbatch s1_${i}
 done
-########### make vcf:
+########### make vcf and vcf index files ##################:
 mkdir /scratch/vivek22/FM_UKB/geno/vcf
 cd /scratch/vivek22/FM_UKB/geno/vcf
 
@@ -249,13 +249,68 @@ done
 for i in {1..22}; do
 sbatch vcf_${i}
 done
+
+mkdir /scratch/vivek22/FM_UKB/geno/vcf/idx
+cd /scratch/vivek22/FM_UKB/geno/vcf/idx
+module load mugqic/tabix
+module load samtools/1.10
+
+for i in {1..22}; do
+cat -> vcf_gz_${i} << EOF
+#!/bin/bash
+#SBATCH --account=def-ldiatc
+#SBATCH --mail-user=vivek.verma@mail.mcgill.ca
+#SBATCH --mail-type=ALL
+#SBATCH --ntasks-per-node=40
+#SBATCH --ntasks=40
+#SBATCH --mem-per-cpu=4G
+#SBATCH --time=04:00:00
+
+module load bcftools/1.10.2
+module load mugqic/tabix
+bcftools view -Oz --no-version --threads 40 ${i}.vcf > ${i}.vcf.gz
+tabix -p vcf ${i}.vcf.gz
+EOF
+done
+
+for i in {1..22}; do
+sbatch vcf_gz_${i}
+done
+
+
+--vcfFile=VCFFILE
+		Path to vcf file.
+
+	--vcfFileIndex=VCFFILEINDEX
+		Path to vcf index file. Indexed by tabix. Path to index for vcf file by tabix, .tbi file by tabix -p vcf file.vcf.gz
+
+	--vcfField=VCFFIELD
+		DS or GT, [default=DS]
+	--sampleFile=SAMPLEFILE
+		Path to the file that contains one column for IDs of samples in the dosage file
+
+	--GMMATmodelFile=GMMATMODELFILE
+		Path to the input file containing the glmm model, which is output from previous step. Will be used by load()
+
+	--varianceRatioFile=VARIANCERATIOFILE
+		Path to the input file containing the variance ratio, which is output from the previous step
+
+	--SAIGEOutputFile=SAIGEOUTPUTFILE
+		Path to the output file containing assoc test results
+
+
+
+
+
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 # ***************************** SAIGE STEP2 ********************************* #
+
+cd /scratch/vivek22/FM_UKB/saige
 module load gcc/7.3.0 r/3.6.1
 time \
 /home/vivek22/R/x86_64-pc-linux-gnu-library/3.6/SAIGE/extdata/step2_SPAtests.R \
-module load gcc/7.3.0 r/3.6.1
+
         --minMAF=0.01 \
         --minMAC=1 \
         --sampleFile=./plink/tcan.sample \

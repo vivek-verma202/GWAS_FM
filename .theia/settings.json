@@ -1,8 +1,9 @@
 {
     "workbench.iconTheme": "theia-file-icons",
     "workbench.colorTheme": "dark",
-    "editor.fontSize": 16,
-    "editor.fontFamily": "monospace",
+    "editor.fontSize": 18,
+    "editor.fontFamily": "Ubuntu",
+   "editor.fontLigatures": true,
     "editor.fontWeight": "700",
     "editor.autoSave": "on",
     "editor.fontWeight": "700",
@@ -10,5 +11,6 @@
     "editor.cursorWidth": "2",
     "git.decorations.colors": true,
     "editor.tabCompletion": "on",
-    "files.eol": "\n"
+    "files.eol": "\n",
+    "editor.fontLigatures": ""
 }
