@@ -208,8 +208,8 @@ cat -> s1_${i} << EOF
 #SBATCH --ntasks=40
 #SBATCH --mem-per-cpu=4G
 #SBATCH --time=60:00:00
-module load gcc/7.3.0 r/3.6.1
 
+module load gcc/7.3.0 r/3.6.1
 /home/vivek22/R/x86_64-pc-linux-gnu-library/3.6/SAIGE/extdata/step1_fitNULLGLMM1.R \
         --plinkFile=../geno/qc_snp/chr_${i} \
         --phenoFile=../pheno/FM_pheno_cov.tab \
@@ -229,14 +229,34 @@ done
 for i in {1..22}; do
 sbatch s1_${i}
 done
+########### make vcf:
+mkdir /scratch/vivek22/FM_UKB/geno/vcf
+cd /scratch/vivek22/FM_UKB/geno/vcf
 
-
+for i in {1..22}; do
+cat -> vcf_${i} << EOF
+#!/bin/bash
+#SBATCH --account=def-ldiatc
+#SBATCH --mail-user=vivek.verma@mail.mcgill.ca
+#SBATCH --mail-type=ALL
+#SBATCH --ntasks-per-node=40
+#SBATCH --ntasks=40
+#SBATCH --mem-per-cpu=4G
+#SBATCH --time=00:60:00
+module load plink/2.00-10252019-avx2
+plink2 --bfile /scratch/vivek22/FM_UKB/geno/qc_snp/chr_${i} --recode vcf --out ${i}
+EOF
+done
+for i in {1..22}; do
+sbatch vcf_${i}
+done
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 # ***************************** SAIGE STEP2 ********************************* #
+module load gcc/7.3.0 r/3.6.1
 time \
 /home/vivek22/R/x86_64-pc-linux-gnu-library/3.6/SAIGE/extdata/step2_SPAtests.R \
-        --bgenFile=./plink/tcan.bgen \
-        --bgenFileIndex=./plink/tcan.bgen.bgi \
+module load gcc/7.3.0 r/3.6.1
         --minMAF=0.01 \
         --minMAC=1 \
         --sampleFile=./plink/tcan.sample \
