@@ -43,7 +43,7 @@ R --no-save
 		sapply(df[,c(5:8)], function(y) summary(as.factor(y)))
 		#   sex_discord het_miss_outlr sex_aneup exces_relatvs
 		# 0      487999         487409    487725        488189
-		# 1         378            968       652           188
+		# 1             378                968           652               188
 
 		df[5:9] <- lapply(df[5:9], factor)
 		sapply(df, function(y) sum(is.na(y))) # no missing values
@@ -157,9 +157,8 @@ cd /scratch/vivek22/FM_UKB
 mkdir pheno
 mv * pheno
 mkdir geno
-mkdir geno/qc_snp
-
-cd geno/qc_snp
+mkdir /scratch/vivek22/FM_UKB/geno/qc_snp
+cd /scratch/vivek22/FM_UKB/geno/qc_snp
 for i in {1..22}; do
 awk -v j="$i" '{if($1==j) print $3}' /scratch/vivek22/UKB/geno/qc1 > $i.snp
 done
@@ -250,11 +249,6 @@ for i in {1..22}; do
 sbatch vcf_${i}
 done
 
-mkdir /scratch/vivek22/FM_UKB/geno/vcf/idx
-cd /scratch/vivek22/FM_UKB/geno/vcf/idx
-module load mugqic/tabix
-module load samtools/1.10
-
 for i in {1..22}; do
 cat -> vcf_gz_${i} << EOF
 #!/bin/bash
@@ -277,30 +271,11 @@ for i in {1..22}; do
 sbatch vcf_gz_${i}
 done
 
+# make ID file from fam
+# confirm if all fam has same number of IDs:
+wc -l ../qc_snp/chr_*.fam
 
---vcfFile=VCFFILE
-		Path to vcf file.
-
-	--vcfFileIndex=VCFFILEINDEX
-		Path to vcf index file. Indexed by tabix. Path to index for vcf file by tabix, .tbi file by tabix -p vcf file.vcf.gz
-
-	--vcfField=VCFFIELD
-		DS or GT, [default=DS]
-	--sampleFile=SAMPLEFILE
-		Path to the file that contains one column for IDs of samples in the dosage file
-
-	--GMMATmodelFile=GMMATMODELFILE
-		Path to the input file containing the glmm model, which is output from previous step. Will be used by load()
-
-	--varianceRatioFile=VARIANCERATIOFILE
-		Path to the input file containing the variance ratio, which is output from the previous step
-
-	--SAIGEOutputFile=SAIGEOUTPUTFILE
-		Path to the output file containing assoc test results
-
-
-
-
+cat ../qc_snp/chr_1.fam | awk '{print $2}' > id
 
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -310,16 +285,19 @@ cd /scratch/vivek22/FM_UKB/saige
 module load gcc/7.3.0 r/3.6.1
 time \
 /home/vivek22/R/x86_64-pc-linux-gnu-library/3.6/SAIGE/extdata/step2_SPAtests.R \
+        --vcfFile=/scratch/vivek22/FM_UKB/geno/vcf/22.vcf.gz \
+        --vcfFileIndex=/scratch/vivek22/FM_UKB/geno/vcf/22.vcf.gz.tbi \
+        --sampleFile=/scratch/vivek22/FM_UKB/geno/vcf/id \
+        --GMMATmodelFile=/scratch/vivek22/FM_UKB/saige/out1_22.rda \
+        --varianceRatioFile=/scratch/vivek22/FM_UKB/saige/out1_22.varianceRatio.txt \
+        --SAIGEOutputFile=/scratch/vivek22/FM_UKB/saige/out1_22_30markers.SAIGE.results.txt \
+        --IsOutputAFinCaseCtrl=TRUE \
+        --IsOutputNinCaseCtrl=TRUE \
+        --IsOutputPvalueNAinGroupTestforBinary=TRUE 
 
-        --minMAF=0.01 \
-        --minMAC=1 \
-        --sampleFile=./plink/tcan.sample \
-        --GMMATmodelFile=./output/tcan_head_or_face.rda \
-        --varianceRatioFile=./output/tcan_head_or_face.varianceRatio.txt \
-        --SAIGEOutputFile=./output/tcan_head_or_face_30markers.SAIGE.results.txt \
-        --IsOutputAFinCaseCtrl=TRUE
 
-awk '{ if ($14 < 0.1) { print } }' ./output/tcan_head_or_face_30markers.SAIGE.results.txt
+
+awk '{ if ($14 < 0.1) { print } }' /scratch/vivek22/FM_UKB/saige/out1_22_30markers.SAIGE.results.txt 
 
 
 
