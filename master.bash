@@ -170,8 +170,7 @@ cat -> geno_qc_${i} << EOF
 #SBATCH --account=def-ldiatc
 #SBATCH --mail-user=vivek.verma@mail.mcgill.ca
 #SBATCH --mail-type=ALL
-#SBATCH --ntasks-per-node=40
-#SBATCH --ntasks=40
+#SBATCH --cpus-per-task=40
 #SBATCH --mem-per-cpu=4G
 #SBATCH --time=60:00:00
 
@@ -202,8 +201,7 @@ cat -> s1_${i} << EOF
 #SBATCH --account=def-ldiatc
 #SBATCH --mail-user=vivek.verma@mail.mcgill.ca
 #SBATCH --mail-type=ALL
-#SBATCH --ntasks-per-node=40
-#SBATCH --ntasks=40
+#SBATCH --cpus-per-task=40
 #SBATCH --mem-per-cpu=4G
 #SBATCH --time=60:00:00
 
@@ -237,8 +235,7 @@ cat -> vcf_${i} << EOF
 #SBATCH --account=def-ldiatc
 #SBATCH --mail-user=vivek.verma@mail.mcgill.ca
 #SBATCH --mail-type=ALL
-#SBATCH --ntasks-per-node=40
-#SBATCH --ntasks=40
+#SBATCH --cpus-per-task=40
 #SBATCH --mem-per-cpu=4G
 #SBATCH --time=00:60:00
 module load plink/2.00-10252019-avx2
@@ -255,8 +252,7 @@ cat -> vcf_gz_${i} << EOF
 #SBATCH --account=def-ldiatc
 #SBATCH --mail-user=vivek.verma@mail.mcgill.ca
 #SBATCH --mail-type=ALL
-#SBATCH --ntasks-per-node=40
-#SBATCH --ntasks=40
+#SBATCH --cpus-per-task=40
 #SBATCH --mem-per-cpu=4G
 #SBATCH --time=04:00:00
 
@@ -298,13 +294,6 @@ time \
 
 
 awk '{ if ($14 < 0.1) { print } }' /scratch/vivek22/FM_UKB/saige/out1_22_30markers.SAIGE.results.txt 
-
-
-
-
-
-
-
 
 
 
