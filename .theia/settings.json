@@ -12,5 +12,5 @@
     "git.decorations.colors": true,
     "editor.tabCompletion": "on",
     "files.eol": "\n",
-    "editor.fontLigatures": ""
+    "editor.fontLigatures": true
 }
