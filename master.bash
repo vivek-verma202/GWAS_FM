@@ -295,7 +295,9 @@ time \
 
 awk '{ if ($14 < 0.1) { print } }' /scratch/vivek22/FM_UKB/saige/out1_22_30markers.SAIGE.results.txt 
 
-
+    #1
+    #2
+    #3
 
 
 

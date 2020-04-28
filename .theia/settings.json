@@ -10,5 +10,6 @@
     "git.decorations.colors": true,
     "editor.tabCompletion": "on",
     "files.eol": "\n",
-    "editor.fontLigatures": true
+    "editor.fontLigatures": true,
+    "editor.renderWhitespace": "all"
 }
