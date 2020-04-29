@@ -13,5 +13,5 @@
     "editor.fontLigatures": true,
     "shellcheck.executablePath": "/usr/bin/shellcheck",
     "editor.renderWhitespace": "all",
-    "shellcheck.customArgs": []
+    "shellcheck.enableQuickFix": true
 }
