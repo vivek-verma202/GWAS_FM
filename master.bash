@@ -1,3 +1,4 @@
+#!/bin/sh
 mkdir /scratch/vivek22/UKB
 mkdir /scratch/vivek22/UKB/geno
 mkdir /scratch/vivek22/FM_UKB
