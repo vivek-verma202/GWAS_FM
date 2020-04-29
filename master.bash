@@ -1,3 +1,4 @@
+#!/bin/bash
 mkdir /scratch/vivek22/UKB
 mkdir /scratch/vivek22/UKB/geno
 mkdir /scratch/vivek22/FM_UKB
@@ -246,13 +247,15 @@ for i in {1..22}; do
 sbatch vcf_${i}
 done
 
-for i in {1..22}; do
+for i in {1..12}; do
 cat -> vcf_gz_${i} << EOF
 #!/bin/bash
 #SBATCH --account=def-ldiatc
 #SBATCH --mail-user=vivek.verma@mail.mcgill.ca
 #SBATCH --mail-type=ALL
-#SBATCH --cpus-per-task=40
+#SBATCH --ntasks-per-node=40
+#SBATCH --ntasks=40
+#SBATCH --mem-per-cpu=4G
 #SBATCH --mem-per-cpu=4G
 #SBATCH --time=04:00:00
 
@@ -263,7 +266,7 @@ tabix -p vcf ${i}.vcf.gz
 EOF
 done
 
-for i in {1..22}; do
+for i in {1..12}; do
 sbatch vcf_gz_${i}
 done
 
