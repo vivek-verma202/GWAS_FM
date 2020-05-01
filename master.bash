@@ -279,6 +279,7 @@ cat ../qc_snp/chr_1.fam | awk '{print $2}' > id
 # ***************************** SAIGE STEP2 ********************************* #
 
 cd /scratch/vivek22/FM_UKB/saige
+cp ./test/out1_21_30markers.SAIGE.results.txt out1_21_30markers.SAIGE.results.txt
 cat -> s2_21 << EOF
 #!/bin/bash
 #SBATCH --account=def-ldiatc
@@ -294,6 +295,7 @@ time \
         --vcfFile=/scratch/vivek22/FM_UKB/geno/vcf/21.vcf.gz \
         --vcfFileIndex=/scratch/vivek22/FM_UKB/geno/vcf/21.vcf.gz.tbi \
         --chrom=21 \
+        --vcfField=GT \
         --sampleFile=/scratch/vivek22/FM_UKB/geno/vcf/id \
         --GMMATmodelFile=/scratch/vivek22/FM_UKB/saige/out1_21.rda \
         --varianceRatioFile=/scratch/vivek22/FM_UKB/saige/out1_21.varianceRatio.txt \
@@ -301,6 +303,7 @@ time \
 EOF
 
 sbatch s2_21
+
 
 awk '{ if ($14 < 0.1) { print } }' /scratch/vivek22/FM_UKB/saige/out1_22_30markers.SAIGE.results.txt 
 

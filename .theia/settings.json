@@ -2,7 +2,7 @@
     "workbench.iconTheme": "theia-file-icons",
     "workbench.colorTheme": "dark",
     "editor.fontSize": 18,
-    "editor.fontFamily": "Ubuntu",
+    "editor.fontFamily": "Consolas, 'Courier New', monospace",
     "editor.fontWeight": "400",
     "editor.autoSave": "on",
     "editor.cursorSmoothCaretAnimation": true,
