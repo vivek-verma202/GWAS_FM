@@ -195,7 +195,6 @@ done
 mkdir /scratch/vivek22/FM_UKB/saige
 cd /scratch/vivek22/FM_UKB/saige
 
-
 for i in {1..22}; do
 cat -> s1_${i} << EOF
 #!/bin/bash
@@ -274,36 +273,34 @@ done
 wc -l ../qc_snp/chr_*.fam
 cat ../qc_snp/chr_1.fam | awk '{print $2}' > id
 
-# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 # ***************************** SAIGE STEP2 ********************************* #
 
 cd /scratch/vivek22/FM_UKB/saige
-cp ./test/out1_21_30markers.SAIGE.results.txt out1_21_30markers.SAIGE.results.txt
-cat -> s2_21 << EOF
+for i in {1..22}; do
+cat -> s2_${i} << EOF
 #!/bin/bash
 #SBATCH --account=def-ldiatc
 #SBATCH --mail-user=vivek.verma@mail.mcgill.ca
 #SBATCH --mail-type=ALL
 #SBATCH --ntasks-per-node=40
 #SBATCH --ntasks=40
-#SBATCH --mem-per-cpu=4G
-#SBATCH --time=05:00:00
+#SBATCH --mem-per-cpu=8G
+#SBATCH --time=08:00:00
 module load gcc/7.3.0 r/3.6.1
-time \
 /home/vivek22/R/x86_64-pc-linux-gnu-library/3.6/SAIGE/extdata/step2_SPAtests.R \
-        --vcfFile=/scratch/vivek22/FM_UKB/geno/vcf/21.vcf.gz \
-        --vcfFileIndex=/scratch/vivek22/FM_UKB/geno/vcf/21.vcf.gz.tbi \
-        --chrom=21 \
+        --vcfFile=/scratch/vivek22/FM_UKB/geno/vcf/${i}.vcf.gz \
+        --vcfFileIndex=/scratch/vivek22/FM_UKB/geno/vcf/${i}.vcf.gz.tbi \
+        --chrom=${i} \
         --vcfField=GT \
         --sampleFile=/scratch/vivek22/FM_UKB/geno/vcf/id \
-        --GMMATmodelFile=/scratch/vivek22/FM_UKB/saige/out1_21.rda \
-        --varianceRatioFile=/scratch/vivek22/FM_UKB/saige/out1_21.varianceRatio.txt \
-        --SAIGEOutputFile=/scratch/vivek22/FM_UKB/saige/out1_21_30markers.SAIGE.results.txt 
+        --GMMATmodelFile=/scratch/vivek22/FM_UKB/saige/out1_${i}.rda \
+        --varianceRatioFile=/scratch/vivek22/FM_UKB/saige/out1_${i}.varianceRatio.txt \
+        --SAIGEOutputFile=/scratch/vivek22/FM_UKB/saige/out1_${i}_30markers.SAIGE.results.txt 
 EOF
-
-sbatch s2_21
-
+done
+for i in {1..22}; do
+sbatch s2_${i}
+done
 
 awk '{ if ($14 < 0.1) { print } }' /scratch/vivek22/FM_UKB/saige/out1_22_30markers.SAIGE.results.txt 
 
