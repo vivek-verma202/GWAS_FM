@@ -284,11 +284,11 @@ cat -> s2_${i} << EOF
 #SBATCH --mail-type=ALL
 #SBATCH --ntasks-per-node=40
 #SBATCH --ntasks=40
-#SBATCH --mem-per-cpu=8G
-#SBATCH --time=08:00:00
+#SBATCH --mem-per-cpu=4G
+#SBATCH --time=24:00:00
 module load gcc/7.3.0 r/3.6.1
 /home/vivek22/R/x86_64-pc-linux-gnu-library/3.6/SAIGE/extdata/step2_SPAtests.R \
-        --vcfFile=/scratch/vivek22/FM_UKB/geno/vcf/${i}.vcf.gz \
+        --vcfFile=/scratch/vivek22/FM_UKB/geno/vcf/${i}.vcf.gz \ 
         --vcfFileIndex=/scratch/vivek22/FM_UKB/geno/vcf/${i}.vcf.gz.tbi \
         --chrom=${i} \
         --vcfField=GT \
@@ -301,6 +301,9 @@ done
 for i in {1..22}; do
 sbatch s2_${i}
 done
+
+
+
 
 awk '{ if ($14 < 0.1) { print } }' /scratch/vivek22/FM_UKB/saige/out1_22_30markers.SAIGE.results.txt 
 
