@@ -302,6 +302,11 @@ for i in {1..22}; do
 sbatch s2_${i}
 done
 
+# confirm step2 worked:
+wc -l out1_*_30markers.SAIGE.results.txt
+
+# concat:
+cat out1_*_30markers.SAIGE.results.txt > saige_fm_ukb_results.txt
 
 
 
