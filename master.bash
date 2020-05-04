@@ -308,10 +308,28 @@ wc -l out1_*_30markers.SAIGE.results.txt
 # concat:
 cat out1_*_30markers.SAIGE.results.txt > saige_fm_ukb_results.txt
 
+# column 8 and 15 have only 1s (imputationInfo, Is.SPA.converge), skip them:
+awk '{$8=$15=""; print $0}' < saige_fm_ukb_results.txt | awk '$1 == ($1+0)' > fm_gwas_res.txt
+sort -n -k 1,1 -k 2,2 < fm_gwas_res.txt > gwas_res.txt
 
+#module load gcc/7.3.0 r/3.6.1
+R --no-save
+df <- read.table("gwas_res.txt", header = F, col.names = c("CHR", "POS", "SNPID", "A1", "A2", "AC_A2", 
+"AF_A2", "N", "BETA", "SE", "Tstat", "p", "p_noSPA", "varT", "varTstar"), stringsAsFactors = F)
+str(df)
+plot(df$p,df$p_noSPA)
+# install.packages("qqman")
+library("qqman")
+qq(df$p)
+pdf(file = "manhattan.pdf", width = 10, height = 5)
+manhattan(df, chr = "CHR", bp = "POS", p = "p", snp = "SNPID",
+col = c("blue4", "orange3"), chrlabs = c(1:22),
+suggestiveline = -log10(1e-05), genomewideline = -log10(5e-08),
+logp = TRUE, annotatePval = -log10(1e-05),annotateTop = TRUE)
+dev.off()
 
-awk '{ if ($14 < 0.1) { print } }' /scratch/vivek22/FM_UKB/saige/out1_22_30markers.SAIGE.results.txt 
-
+#manhattan(subset(gwasResults, CHR == 16), highlight = snpsOfInterest, xlim = c(200, 
+#    500), main = "Chr 3")
 
 
 
