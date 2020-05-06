@@ -246,7 +246,7 @@ for i in {1..22}; do
 sbatch vcf_${i}
 done
 
-for i in {1..12}; do
+for i in {1..22}; do
 cat -> vcf_gz_${i} << EOF
 #!/bin/bash
 #SBATCH --account=def-ldiatc
@@ -314,26 +314,87 @@ sort -n -k 1,1 -k 2,2 < fm_gwas_res.txt > gwas_res.txt
 
 #module load gcc/7.3.0 r/3.6.1
 R --no-save
-df <- read.table("gwas_res.txt", header = F, col.names = c("CHR", "POS", "SNPID", "A1", "A2", "AC_A2", 
-"AF_A2", "N", "BETA", "SE", "Tstat", "p", "p_noSPA", "varT", "varTstar"), stringsAsFactors = F)
-str(df)
-plot(df$p,df$p_noSPA)
-# install.packages("qqman")
-library("qqman")
-qq(df$p)
-pdf(file = "manhattan.pdf", width = 10, height = 5)
-manhattan(df, chr = "CHR", bp = "POS", p = "p", snp = "SNPID",
-col = c("blue4", "orange3"), chrlabs = c(1:22),
-suggestiveline = -log10(1e-05), genomewideline = -log10(5e-08),
-logp = TRUE, annotatePval = -log10(1e-05),annotateTop = TRUE)
-dev.off()
+        df <- read.table("gwas_res.txt", header = F, col.names = c("CHR", "POS", "SNPID", "A1", "A2", "AC_A2", 
+        "AF_A2", "N", "BETA", "SE", "Tstat", "p", "p_noSPA", "varT", "varTstar"), stringsAsFactors = F)
+        str(df)
+        plot(df$p,df$p_noSPA)
+        # install.packages("qqman")
+        library("qqman")
+        qq(df$p)
+        pdf(file = "manhattan.pdf", width = 10, height = 5)
+        manhattan(df, chr = "CHR", bp = "POS", p = "p", snp = "SNPID",
+        col = c("blue4", "orange3"), chrlabs = c(1:22),
+        suggestiveline = -log10(1e-05), genomewideline = -log10(5e-08),
+        logp = TRUE, annotatePval = -log10(1e-05),annotateTop = TRUE)
+        dev.off()
 
 #manhattan(subset(gwasResults, CHR == 16), highlight = snpsOfInterest, xlim = c(200, 
 #    500), main = "Chr 3")
 
+# back up original results:
+mkdir /scratch/vivek22/FM_UKB/saige/all_res
+cp /scratch/vivek22/FM_UKB/saige/out1_*_30markers.SAIGE.results.txt /scratch/vivek22/FM_UKB/saige/all_res
 
 
+# ***************   GWAS ONLY FEMALES  *****************
+mkdir /scratch/vivek22/FM_UKB/saige/f_only
+cd /scratch/vivek22/FM_UKB/saige/f_only
 
+# prepare sample file
+awk -F "\t" '{ if ($5 == 0) {print $1}}' < /scratch/vivek22/FM_UKB/pheno/FM_pheno_cov.tab > females
+
+# repeat saige step 2 only:
+for i in {1..22}; do
+cat -> s2f_${i} << EOF
+#!/bin/bash
+#SBATCH --account=def-ldiatc
+#SBATCH --mail-user=vivek.verma@mail.mcgill.ca
+#SBATCH --mail-type=ALL
+#SBATCH --ntasks-per-node=40
+#SBATCH --ntasks=40
+#SBATCH --mem-per-cpu=4G
+#SBATCH --time=24:00:00
+module load gcc/7.3.0 r/3.6.1
+/home/vivek22/R/x86_64-pc-linux-gnu-library/3.6/SAIGE/extdata/step2_SPAtests.R \
+        --vcfFile=/scratch/vivek22/FM_UKB/geno/vcf/${i}.vcf.gz \ 
+        --vcfFileIndex=/scratch/vivek22/FM_UKB/geno/vcf/${i}.vcf.gz.tbi \
+        --chrom=${i} \
+        --vcfField=GT \
+        --sampleFile=/scratch/vivek22/FM_UKB/saige/f_only/females \
+        --GMMATmodelFile=/scratch/vivek22/FM_UKB/saige/out1_${i}.rda \
+        --varianceRatioFile=/scratch/vivek22/FM_UKB/saige/out1_${i}.varianceRatio.txt \
+        --SAIGEOutputFile=/scratch/vivek22/FM_UKB/saige/f_only/out1_${i}_30markers.SAIGE.results.txt 
+EOF
+done
+for i in {1..22}; do
+sbatch s2f_${i}
+done
+
+# confirm step2 worked:
+wc -l out1_*_30markers.SAIGE.results.txt
+
+# concat:
+cat out1_*_30markers.SAIGE.results.txt > saige_fm_ukb_results.txt
+
+# column 8 and 15 have only 1s (imputationInfo, Is.SPA.converge), skip them:
+awk '{$8=$15=""; print $0}' < saige_fm_ukb_results.txt | awk '$1 == ($1+0)' > fm_gwas_res.txt
+sort -n -k 1,1 -k 2,2 < fm_gwas_res.txt > gwas_res.txt
+
+#module load gcc/7.3.0 r/3.6.1
+R --no-save
+        df <- read.table("gwas_res.txt", header = F, col.names = c("CHR", "POS", "SNPID", "A1", "A2", "AC_A2", 
+        "AF_A2", "N", "BETA", "SE", "Tstat", "p", "p_noSPA", "varT", "varTstar"), stringsAsFactors = F)
+        str(df)
+        plot(df$p,df$p_noSPA)
+        # install.packages("qqman")
+        library("qqman")
+        qq(df$p)
+        pdf(file = "manhattan.pdf", width = 10, height = 5)
+        manhattan(df, chr = "CHR", bp = "POS", p = "p", snp = "SNPID",
+        col = c("blue4", "orange3"), chrlabs = c(1:22),
+        suggestiveline = -log10(1e-05), genomewideline = -log10(5e-08),
+        logp = TRUE, annotatePval = -log10(1e-05),annotateTop = TRUE)
+        dev.off()
 
 
 
