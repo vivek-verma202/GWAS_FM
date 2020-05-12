@@ -9,7 +9,7 @@ qqunif(df$pval,type="unif",logscale=TRUE,base=10,
 
 pdf(file = "qq2.pdf", width = 8, height = 8)
 qqunif.plot(df$pval)
-dev.off()
+dev.off()       
 
 write.table(df1, file = "GWAS_sum.tab", append = F, quote = F, sep = "\t",
 			eol = "\n", na = "NA", dec = ".", row.names = F, col.names = T)
