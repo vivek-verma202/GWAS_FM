@@ -377,7 +377,6 @@ module load gcc/7.3.0 r/3.6.1
         --LOCO=FALSE
 EOF
 done
-
 for i in {1..22}; do
 sbatch s1_${i}
 done
