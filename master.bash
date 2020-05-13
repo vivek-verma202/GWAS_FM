@@ -942,3 +942,11 @@ write.table(df[,-6], file = "GWAS_summary.tab", append = F, quote = F, sep = "\t
 q()
 
 gzip -9 GWAS_summary.tab > GWAS_summary.gz
+
+### SMR:
+awk -v OFS="\t" 'BEGIN {print "SNP","A1","A2","freq","b","se","p","n"} {if (NR > 1) {print $3,$4,$5,$7,$10,$11,$13,$9}}' < /scratch/vivek22/FM_UKB/saige/out1_22_30markers.SAIGE.results.txt  > test22
+
+~/smr_Linux --bfile ./FM_UKB/geno/qc_snp/chr_22 --gwas-summary test22 --beqtl-summary westra_eqtl_hg19 --diff-freq-prop 0.5 --out mysmr --thread-num 40 
+
+
+
